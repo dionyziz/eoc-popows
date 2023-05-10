@@ -1,0 +1,34 @@
+\ProvidesPackage{preamble}
+
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+
+\usepackage[hyphens]{url}
+\usepackage[hidelinks, bookmarksopen=true]{hyperref}
+\usepackage{bookmark}
+\usepackage[utf8]{inputenc}
+\usepackage{xifthen}
+
+\usepackage{fontspec}
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\newfontfamily{\greekfont}{CMU Serif}
+\newfontfamily{\greekfontsf}{CMU Sans Serif}
+\usepackage[Greek,Latin]{ucharclasses}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setotherlanguage{greek}
+\setTransitionsForGreek{\selectlanguage{greek}}{\selectlanguage{english}}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{xcolor}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{graphicx}
+
+\usepackage{marvosym}

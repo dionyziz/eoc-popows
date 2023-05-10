@@ -1,0 +1,55 @@
+\documentclass[runningheads]{format/llncs}
+\usepackage{preamble}
+\hyphenation{block-chain block-chains}
+\hyphenation{side-chain side-chains}
+
+\makeatother
+\title{
+Sidechains
+}
+
+\author{Dionysis Zindros}
+\institute{University of Athens}
+
+\begin{document}
+
+\maketitle
+
+\section*{Entry title}
+Sidechains
+
+\section*{Authors name, affiliation, email address}
+Dionysis Zindros,
+University of Athens,
+dionyziz@gmail.com
+
+\section*{Synonyms}
+Main/Side chains, Pegged Sidechains, Cross-chains, Parent/Child chains
+
+\section*{Definition}
+\emph{Sidechains} are protocols which allow multiple individual blockchain protocols running in parallel to communicate with one another.
+
+\section*{Background}
+Introduced in ``Enabling blockchain innovations with pegged sidechains'' \cite{sidechains}, they were initially envisioned as means of enabling smooth blockchain upgrades without the need of hard or soft forks. In their initial formulation, sidechains were conceived as child chains conceptually associated with a \emph{parent blockchain}. Such a parent chain that has child chains associated with it is also known as a \emph{main chain}. In this context, the parent and child blockchains have consensus populations that work independently on each chain. Coins can be moved from the parent chain to the child chain, where they can be exchanged, split into denominations, and merged, until they are moved back to the parent chain, maintaining their value throughout the transfer. This moving of value from chain to chain is known as a \emph{2-way peg}. The child chain can implement features that do not exist in the parent chain. In this way, the child chain can be used to experiment with new features before they are adopted by the parent chain. Security of the child chain can be increased by allowing the consensus population of the parent chain to contribute to the consensus of the child chain using merged mining or merged staking \cite{pos-sidechains}. The ability to move an asset from one chain to another decouples the notion of a blockchain from the notion of a cryptocurrency.
+
+The \emph{firewall} property of sidechains ensures that no more money can be returned from a child chain to the parent chain than the amount that has already been moved from the parent chain to the child chain. This ensures that a catastrophic failure of the child chain does not propagate into the parent chain, at least in terms of the macroeconomic insurances of the parent chain. A benefit of the firewall property is that coin holders who elect to hold their coins in the parent chain and not move them into the child chain do not subject their capital to potential failures of the experimental features of the child chain.
+
+The parent/child relationship of sidechains has been generalized to allow for generic cross-chain communication between blockchains that are stand-alone \cite{crosschain-sok}. These mechanisms enable communication between blockchains that were started independently and were not originally designed to communicate. Generic protocols have been developed to describe the communication among multiple chains, including \emph{XCLAIM} \cite{xclaim}, \emph{Interledger}, and \emph{Polkadot}. In case sidechains are used to allow two counterparties to swap assets held on different chains, a simpler mechanism of \emph{atomic swaps} allows for this while not fully connecting the two chains. In addition to allowing 2-way pegs, generic information can also be passed from one chain to another. This allows one blockchain to react to events that take place in another \cite{pow-sidechains} and the development of smart contracts which rely on remote blockchain conditions to release payments.
+
+\section*{Theory}
+While there are various means to cryptoeconomically ensure the truthful passing of information from chain to chain in the optimistic case, all of these mechanisms require an underlying mechanism of cryptographically verifying information has not been tampered with. Multiple underlying mechanisms for cross-chain information passing have been explored. The simplest case involves the duplication of information of one blockchain within another. The de facto implementation of this technique is \emph{BTCRelay}, which passes information from Bitcoin to Ethereum. Another technique that has been used mandates that the mining population of one chain monitors all sidechains. A characteristic implementation of this technique is Rootstock and Drivechains. Alternatively, the passing of information between chains can be delegated to trusted committees or a federation using multisignature mechanisms.
+
+Lasty, a primitive has been introduced that enables the compression of Proof-of-Work of one chain into a so-called \emph{Non-Interactive Proof of Proof-of-Work \cite{nipopows} (NIPoPoW)} which can then be consumed on a remote chain. The challenge in determining whether an event has taken place in a remote blockchain is verifying its containment in the blockchain with the most proof-of-work without relaying that proof-of-work. NIPoPoWs are short strings that allow for verification of the longest chain without duplicating one chain within another. Two NIPoPoW instantiations are \emph{superblock NIPoPoWs} and \emph{FlyClient}. Superblock NIPoPoWs use blocks that have achieved significantly more proof-of-work than required as samples that work took place. FlyClient uses a challenge-response random sampling of blocks within the blockchain to illustrate that work took place. The challenge-response protocol is inspired by Schnorr zero-knowledge proofs and is made non-interactive using the Fiat–Shamir heuristic. These schemes only work for blockchains that are based on proof-of-work.
+
+\section*{Application}
+Sidechains have also been used for scalability purposes. In this context, a main chain off-loads a portion of its transaction traffic to a sidechain. Characteristic examples of such an application are Ethereum’s Plasma chains. These are child chains to Ethereum that are maintained by one central party  who is responsible for maintaining its consensus. The Plasma chain commits the hash of every block header it produces to Ethereum. The Plasma chain maintainer remains untrusted, because, in case of dispute, any party can challenge the transaction by resorting to a smart contract in the main chain that functions as a dispute resolution mechanism. The maintainer is therefore only responsible for the liveness of the sidechain, but in case liveness is violated, the coins on the sidechain can be safely moved back to the main chain. Plasma chains constitute an alternative to layer-2 constructions for scalability purposes.
+
+While sidechains allow the communication between proof-of-work and proof-of-stake blockchains and combinations thereof, the same mechanisms can be used to allow for communication between decentralized blockchains and more centralized systems such as Byzantine Fault Tolerant systems. Such mechanisms could enable the migration and interoperability between legacy systems and newer blockchain systems.
+
+\section*{Open Problems and Future Directions}
+Sidechains constitute a promising technology in an ecosystem that has given birth to thousands of different cryptocurrencies and blockchains, but their adoption is currently limited. Cross-chain communication is a vibrant area of research and how wide its adoption in production systems will be remains to be seen.
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+
+\end{document}

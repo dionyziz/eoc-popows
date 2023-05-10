@@ -1,0 +1,82 @@
+\documentclass[runningheads]{format/llncs}
+\usepackage{preamble}
+\hyphenation{block-chain block-chains}
+\hyphenation{side-chain side-chains}
+
+\makeatother
+\title{
+Proofs of Proof-of-Work (PoPoWs)
+}
+
+\author{Dionysis Zindros}
+\institute{Stanford University}
+
+\begin{document}
+
+\maketitle
+
+\section*{Entry title}
+Proofs of Proof-of-Work (PoPoWs)
+
+\section*{Authors name, affiliation, email address}
+Dionysis Zindros,
+Stanford University,
+dionyziz@gmail.com
+
+\section*{Synonyms}
+None
+
+\section*{Definition}
+\emph{Proofs of Proof-of-Work} (PoPoWs) are a primitive
+that allows parties who have witnessed the lifecycle of a proof-of-work blockchain to
+prove facts about this chain to third party \emph{verifiers} who are not participants
+in the blockchain network.
+
+\section*{Background}
+
+During the execution of blockchain protocols based on proof-of-work, chains of blocks containing transactions are created. While mining nodes and full nodes, who participate in the generation and validation of blocks, are typically always online, this is not the case for \emph{late joining clients}. These clients are interested in retrieving information about the state of the system. Such information of interest can be, for example, their balance. Clients can be offline for long periods of time. Contrary to full nodes, clients are not interested in every event recorded on the chain, but only to those events that concern them in particular.
+
+PoPoWs allow full nodes to prove facts about the underlying chain to such clients. The full node providing such proofs is known as a \emph{prover}, while the client verifying the claim is known as the \emph{verifier}, following the related literature in zero knowledge proofs (in cryptography) and interactive proof systems (in complexity theory). In this protocol, verifiers have the opportunity to remain offline for long periods of time and to quickly synchronize with the network when they reconnect to it. Different from classical interactive proof protocols, PoPoWs require verifiers to connect to multiple provers to receive potentially conflicting claims. The job of the verifier is to ascertain which prover claims are fraudulent and which are truthful, provided that they are connected to at least one honest prover.
+
+PoPoWs can be interactive or non-interactive. In Non-Interactive Proofs of Proof-of-Work (NIPoPoWs), each prover must independently provide their proof to the verifier. After receiving the request to provide a proof, the provers cannot interact with one another. Additionally, the verifier cannot interact with them to interrogate them about the veracity of their claims, and the requests cannot be adaptive. The single round of communication works as follows: Initially the provers learn about the predicate that they have been requested to prove. Such a predicate could ask, for example, whether an account's balance has a certain value. Next, each of them generates a \emph{proof} of the truthfulness or falsity of that predicate by inspecting their local chain. These proofs are strings that are sent from each prover to the verifier. The verifier receives all these proofs and must decide which of them is truthful, without further interaction with the provers. In addition to the protocol primitive, the proof strings themselves are known as \emph{NIPoPoWs}.
+
+The first NIPoPoW protocol was put forth together with the invention of blockchains and Bitcoin~\cite{bitcoin} and is termed \emph{Simple Payment Verification} (SPV). In that protocol, all proof-of-work is sent from the prover to the verifier, but transactions that are not of interest are pruned. These proofs grow linearly in the execution time of the underlying blockchain, because they must include a constant amount of additional data for each block produced in the underlying chain. These data, termed the \emph{block headers}, contain proof-of-work and allow the verifier to choose the chain with the most proof-of-work.
+
+The term \emph{PoPoW} was introduced in \emph{Proofs of Proof-of-Work with Sublinear Complexity}~\cite{popows}. The term \emph{NIPoPoW} was introduced in \emph{Non-Interactive Proofs of Proof-of-Work}~\cite{nipopows}. In that work, the problem of whether such non-interactive proofs can attain sublinear size is posited and answered in the affirmative by a construction which achieves NIPoPoWs polylogarithmic in the execution time. NIPoPoWs that are polylogarithmic or better in size are termed \emph{succinct}. The follow-up work of \emph{FlyClient}~\cite{flyclient} proposes a different instantiation of the NIPoPoW primitive and improves upon the original approach, providing a different style of succinct NIPoPoWs.
+
+\section*{Theory}
+The three known approaches to constructing succinct NIPoPoWs are \emph{superblock}-based NIPoPoWs, \emph{FlyClient} NIPoPoWs, and zero-knowledge NIPoPoWs~\cite{coda,plumo}.
+
+\emph{Superblock}-based NIPoPoWs were put forth in the paper \emph{Non-Interactive Proofs of Proof of Work}~\cite{nipopows} and are based on the concept of \emph{superblocks}. A \emph{superblock} is a block that has attained much more proof-of-work than required for block validity. More specifically, any valid chain block $B$ satisfies the proof-of-work equation $H(B) \leq T$ where $H$ denotes a cryptographic hash function and $T$ denotes a \emph{mining target}, a small number that makes the mining problem moderately hard. Superblocks satisfy this equation much better than regular blocks. For those blocks, it holds that $H(B) \leq \frac{T}{2^\mu}$ for some integer $\mu$. The exponent $\mu$ indicates the \emph{superblock level}, with higher levels denoting blocks that capture more proof-of-work. Superblock-based NIPoPoWs use these superblocks to sample the underlying proof-of-work of the chain by omitting low-level blocks. As such, the proofs consist of only a sufficiently high level of superblocks. The sampling becomes more frequent towards the tip of the chain (i.e., the more recently generated blocks). The proof is constructed by assembling all the sampled block headers into a string.
+
+FlyClient NIPoPoWs were put forth in \emph{FlyClient} \cite{flyclient} and are based on the \emph{Fiat--Shamir} heuristic. Contrary to superblock-based constructions, the sampling is performed at random and not based on some block property. Similarly to the Fiat--Shamir heuristic when applied to $\Sigma$ protocols, some sufficiently unbiased randomness is obtained by taking the output of a cryptographically secure hash function $H$ and treating it a seed for the sampling process. The input to the hash function in this case comes from data in the chain itself. As in the superblock-based construction, sampling becomes more frequent near the tip of the chain. Because the sampling takes place based on randomness which is emitted from the chain itself, the samples change as the chain grows. The FlyClient construction does not require the assumption that the mining difficulty remains constant throughout the execution. However, the FlyClient construction does not allow for logarithmic-space mining~\cite{logspace}.
+
+Superblock- and FlyClient-based NIPoPoWs are simple constructions and achieve polylogarithmic complexity. Zero-knowledge NIPoPoWs can achieve polylogarithmic or constant complexity depending on the underlying scheme utilized. Simple \emph{interactive} PoPoWs can be constructed with \emph{constant} communication complexity~\cite{glimpse}.
+
+\section*{Application}
+NIPoPoWs have two important applications: The construction of \emph{superlight clients} and \emph{trustless cross-chain bridges}.
+
+\emph{Superlight clients} are efficient blockchain clients that run on devices with limited connectivity and bandwidth such as phones. They may remain offline for large periods of time. When they boot up again, they wish to quickly learn facts about the underlying blockchain, but do not have the bandwidth to download linear data from the network.
+
+\emph{Cross-chain bridges} allow the movement of data from one blockchain to another. When bridging, it is desired that validators of different blockchains do not need to connect to their counterpart networks. Towards that goal, information can be passed from one blockchain to another using a NIPoPoW. The NIPoPoW proofs are processed by smart contracts (on-chain programs) that function as NIPoPoW verifiers; they are on-chain superlight clients. Due to the very high gas cost of running programs on-chain, which translates to a real financial cost, the succinct nature of modern NIPoPoWs becomes critical for the viability of these implementations. NIPoPoWs are only useful for consuming data sourced from proof-of-work-based blockchains~\cite{pow-sidechains} and do not work for proof-of-stake blockchains.
+
+NIPoPoWs lie at the heart of trustless bridges, but have so far seen limited adoption in production settings. In most practical applications so far, they are instead replaced by trusted third parties or groups of third parties (federated authorities) in the form of smart contract oracles.
+
+\section*{Open Problems and Future Directions}
+It is not known if efficient NIPoPoWs of constant size can be constructed without a trusted setup. Both polylogarithmic NIPoPoWs and constant interactive PoPoWs rely on the Random Oracle model. In the case of superblocks, the Random Oracle ensures the unbiased~\cite{compactsuperblocks} distribution of superblocks in the output of the mining process. In the case of FlyClient, the Random Oracle ensures that the output of the Fiat--Shamir sampling process is mostly unbiased.
+
+It is not known whether superblock-based NIPoPoWs work in the variable difficulty setting. It is not known if NIPoPoWs heal in temporary dishonest majority settings.
+
+The respective construction in proof-of-stake systems is known as \emph{(Non-Interactive) Proofs of Proof-of-Stake}, (NI)PoPoS.
+
+\section*{Cross-References}
+\begin{itemize}
+  \item Sidechains
+  \item Zero Knowledge Proofs
+  \item Fiat--Shamir heuristic
+\end{itemize}
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+
+\end{document}
